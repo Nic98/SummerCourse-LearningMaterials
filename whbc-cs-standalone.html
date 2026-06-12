@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHBC Computer Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --carbon:#171A20;--graphite:#393C41;--pewter:#5C5E62;
+  --blue:#3E6AE1;--surface:#FFFFFF;--ash:#F4F4F4;--cloud:#EEEEEE;
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:#fff;color:#171A20;line-height:1.6;overflow-x:hidden}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;height:56px;display:flex;align-items:center;padding:0 32px;justify-content:space-between;transition:background .33s,border-color .33s}
+#nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid #eee}
+.nav-logo{font-size:13px;font-weight:500;color:#171A20;text-decoration:none}
+.nav-links{display:flex;gap:24px}
+.nav-link{font-size:12px;color:#5C5E62;text-decoration:none;transition:color .33s;cursor:pointer}
+.nav-link:hover{color:#3E6AE1}
+#progress-bar{position:fixed;top:0;left:0;height:2px;background:#3E6AE1;z-index:200;width:0;transition:width .1s linear}
+
+/* ── SECTIONS ── */
+.sec{padding:96px 24px;opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.sec.visible{opacity:1;transform:none}
+.sec.ash{background:#F4F4F4}
+.sec.white{background:#fff}
+.container{max-width:1200px;margin:0 auto}
+.container-narrow{max-width:800px;margin:0 auto}
+
+/* ── TYPOGRAPHY ── */
+.label{font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:#5C5E62;margin-bottom:16px}
+.hero-title{font-size:clamp(28px,4vw,44px);font-weight:500;line-height:1.15;color:#171A20;margin-bottom:8px}
+.subtitle{font-size:14px;color:#5C5E62}
+.subtitle-zh{font-size:12px;color:#5C5E62;margin-top:2px}
+.desc{font-size:14px;line-height:1.6;color:#393C41}
+.desc-zh{font-size:12px;color:#5C5E62;margin-top:4px}
+
+/* ── BUTTONS ── */
+.btn-primary{display:inline-flex;align-items:center;height:40px;padding:0 24px;border-radius:4px;background:#3E6AE1;color:#fff;font-size:14px;font-weight:500;border:none;cursor:pointer;transition:background .33s;font-family:inherit}
+.btn-primary:hover{background:#3560cc}
+.btn-secondary{display:inline-flex;align-items:center;height:40px;padding:0 24px;border-radius:4px;background:transparent;color:#171A20;font-size:14px;font-weight:500;border:1px solid #393C41;cursor:pointer;transition:border-color .33s,color .33s;font-family:inherit}
+.btn-secondary:hover{border-color:#3E6AE1;color:#3E6AE1}
+
+/* ── CODE BLOCK ── */
+.code-block{background:#0d1117;border:1px solid #2a2d35;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;overflow:hidden;margin-bottom:0}
+.code-header{background:#171A20;padding:8px 16px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #2a2d35}
+.dot{width:8px;height:8px;border-radius:50%;background:#393C41}
+.code-lang{font-size:10px;color:#5C5E62;margin-left:auto;letter-spacing:.05em}
+.code-body{padding:16px;color:#D0D1D2;line-height:1.8;white-space:pre}
+.code-out{padding:8px 16px;border-top:1px solid #2a2d35;color:#3E6AE1;font-size:12px;white-space:pre}
+.py-kw{color:#818cf8}.py-str{color:#34d399}.py-num{color:#fbbf24}.py-cmt{color:#5C5E62}.py-fn{color:#60a5fa}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#eee;border:1px solid #eee}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#eee}
+.g22{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#eee;border:1px solid #eee}
+@media(max-width:768px){.g2,.g3,.g4,.g22{grid-template-columns:1fr}.nav-links{display:none}.sec{padding:64px 16px}}
+@media(max-width:480px){.g22{grid-template-columns:1fr}}
+
+/* ── CALLOUT ── */
+.callout{padding:24px 32px;background:#fff;border:1px solid #eee;border-left:3px solid #3E6AE1;margin-top:48px}
+.callout-dark{padding:48px 32px;background:#171A20;text-align:center;margin-top:48px}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap}
+.tab-btn{height:40px;padding:0 20px;border-radius:4px;border:1px solid #eee;background:transparent;color:#393C41;font-size:13px;font-weight:500;cursor:pointer;transition:background .33s,border-color .33s,color .33s;font-family:inherit}
+.tab-btn.active{background:#3E6AE1;border-color:#3E6AE1;color:#fff}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.tab-panel{background:#fff;border:1px solid #eee;padding:36px 32px}
+
+/* ── LANG CARDS ── */
+.lang-card{position:relative;background:#fff;padding:20px 24px;overflow:hidden;cursor:pointer;min-height:80px;transition:background .2s}
+.lang-card-front{transition:opacity .2s}
+.lang-card-back{position:absolute;inset:0;background:#0d1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;opacity:0;transition:opacity .2s;padding:12px}
+.lang-card:hover .lang-card-back{opacity:1}
+.lang-card:hover .lang-card-front{opacity:0}
+
+/* ── QUIZ ── */
+.quiz-cards{display:flex;flex-direction:column;gap:1px;background:#eee}
+.quiz-card{background:#fff;border:1px solid #eee;padding:32px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;margin:20px 0 0}
+.opt-btn{padding:10px 20px;border:1px solid #eee;background:#fff;color:#393C41;font-size:14px;font-weight:500;cursor:pointer;border-radius:4px;transition:border-color .2s,background .2s,color .2s;text-align:left;font-family:inherit;width:100%}
+.opt-btn:hover:not(:disabled){border-color:#3E6AE1}
+.opt-btn.correct{border-color:#3E6AE1;background:#3E6AE1;color:#fff}
+.opt-btn.wrong{border-color:#393C41;background:#F4F4F4;color:#393C41}
+.opt-btn.fade{opacity:.35}
+.explanation{border-left:3px solid #3E6AE1;padding:12px 16px;margin-top:16px;display:none}
+.explanation.wrong-exp{border-color:#393C41}
+.explanation.show{display:block}
+
+/* ── SLIDER (selection demo) ── */
+input[type=range]{accent-color:#3E6AE1;width:100%}
+.flow-branch-box{padding:8px 20px;border:1px solid #eee;font-family:monospace;font-size:12px;font-weight:500;color:#171A20;transition:background .33s,color .33s}
+.flow-branch-box.pass{background:#3E6AE1;color:#fff;border-color:#3E6AE1}
+.flow-branch-box.fail{background:#393C41;color:#fff;border-color:#393C41}
+
+/* ── LOOP DEMO ── */
+.loop-output{font-family:'JetBrains Mono',monospace;font-size:13px;min-height:80px;line-height:2;color:#3E6AE1}
+
+/* ── FUN FACTS ── */
+.fact-cell{background:#fff;padding:32px 28px;display:flex;flex-direction:column;gap:16px}
+.fact-cell:hover{border-top:3px solid #3E6AE1;padding-top:29px}
+
+/* ── TURTLE SVG ── */
+#sq-path{stroke-dasharray:720;stroke-dashoffset:720;animation:draw-sq 2.5s linear 0.3s infinite}
+@keyframes draw-sq{0%{stroke-dashoffset:720}100%{stroke-dashoffset:0}}
+#turtle-g{animation:walk-sq 2.5s linear 0.3s infinite}
+@keyframes walk-sq{
+  0%  {transform:translate(140px,60px)}
+  25% {transform:translate(320px,60px)}
+  50% {transform:translate(320px,240px)}
+  75% {transform:translate(140px,240px)}
+  100%{transform:translate(140px,60px)}
+}
+
+/* ── HERO ── */
+#hero{min-height:100vh;background:#fff;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;padding:80px 32px 40px;opacity:1;transform:none}
+.hero-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;width:100%}
+@media(max-width:768px){.hero-grid{grid-template-columns:1fr}}
+.hero-divider{position:absolute;top:0;bottom:0;left:50%;width:1px;background:#eee;opacity:.5}
+.cursor-blink{display:inline-block;width:8px;height:16px;background:#3E6AE1;vertical-align:middle;animation:blink 1s step-end infinite;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:#5C5E62;font-size:10px;letter-spacing:.15em;text-transform:uppercase;animation:bob 1.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
+.code-line{opacity:0;animation:fadein .4s forwards}
+@keyframes fadein{to{opacity:1}}
+
+/* ── VIDEO PLACEHOLDER ── */
+.video-ph{background:#171A20;border:1px solid #2a2d35;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border-radius:4px;cursor:pointer;position:relative}
+.play-btn{width:52px;height:52px;border-radius:4px;border:1px solid #393C41;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#D0D1D2;font-size:20px;transition:border-color .33s,color .33s}
+.play-btn:hover{border-color:#3E6AE1;color:#3E6AE1}
+.video-ph-label{font-size:10px;font-family:monospace;color:#2a2d35;position:absolute;bottom:10px}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#">WHBC Computer Science</a>
+  <div class="nav-links">
+    <span class="nav-link" onclick="goTo('what-is-programming')">编程是什么</span>
+    <span class="nav-link" onclick="goTo('languages')">编程语言</span>
+    <span class="nav-link" onclick="goTo('why-python')">为什么Python</span>
+    <span class="nav-link" onclick="goTo('fundamentals')">基础知识</span>
+    <span class="nav-link" onclick="goTo('challenge')">小挑战</span>
+    <span class="nav-link" onclick="goTo('next-week')">下周预告</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-divider hidden-mobile"></div>
+  <div class="hero-grid">
+    <div>
+      <p class="label" style="margin-bottom:24px">Year 10 · First Lesson · 2026</p>
+      <h1 class="hero-title" style="font-size:clamp(32px,5vw,52px);margin-bottom:12px">WHBC<br>Computer Science</h1>
+      <p style="font-size:22px;font-weight:400;color:#393C41;margin-bottom:4px">Welcome to the World of Coding</p>
+      <p style="font-size:14px;color:#5C5E62;margin-bottom:24px">欢迎来到编程的世界</p>
+      <p style="font-size:14px;line-height:1.6;color:#393C41;max-width:400px;margin-bottom:4px">Computers are powerful, but they only follow instructions. Programming is the art of telling computers what to do.</p>
+      <p style="font-size:12px;color:#5C5E62;margin-bottom:40px">计算机很强大，但它只能执行指令。编程就是告诉计算机该做什么的艺术。</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-primary" onclick="goTo('what-is-programming')">Start Learning</button>
+        <button class="btn-secondary" onclick="goTo('fundamentals')">Jump to Python</button>
+      </div>
+    </div>
+    <div class="code-block" style="padding:24px 28px">
+      <div style="display:flex;gap:6px;margin-bottom:20px"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;color:#D0D1D2">
+        <div class="code-line" style="animation-delay:.6s"><span class="py-cmt"># Welcome to Computer Science</span></div>
+        <div class="code-line" style="animation-delay:.8s"><span class="py-kw">student</span> = <span class="py-str">"Year 10"</span></div>
+        <div class="code-line" style="animation-delay:1s"><span class="py-kw">subject</span> = <span class="py-str">"Python"</span></div>
+        <div class="code-line" style="animation-delay:1.2s">&nbsp;</div>
+        <div class="code-line" style="animation-delay:1.3s"><span class="py-kw">if</span> student == <span class="py-str">"Year 10"</span>:</div>
+        <div class="code-line" style="animation-delay:1.5s">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">print</span>(<span class="py-str">"Let's start coding!"</span>)</div>
+        <div class="code-line" style="animation-delay:1.7s">&nbsp;</div>
+        <div class="code-line" style="animation-delay:1.8s"><span class="py-kw">for</span> lesson <span class="py-kw">in</span> <span class="py-fn">range</span>(<span class="py-num">1</span>, <span class="py-num">11</span>):</div>
+        <div class="code-line" style="animation-delay:2s">&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-fn">print</span>(<span class="py-fn">f</span><span class="py-str">"Lesson {lesson}"</span>)</div>
+        <div class="code-line" style="animation-delay:2.2s"><span class="cursor-blink"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- 01 WHAT IS PROGRAMMING -->
+<section id="what-is-programming" class="sec white">
+<div class="container">
+  <p class="label">01 — what is programming · 什么是编程</p>
+  <h2 class="hero-title">What is Programming?</h2>
+  <p class="subtitle">什么是编程？</p>
+  <p class="desc" style="max-width:480px;margin-top:12px;margin-bottom:4px">A program is simply a <strong style="color:#171A20">set of instructions</strong>. Just like teaching someone to make a sandwich — one step at a time.</p>
+  <p style="font-size:13px;color:#5C5E62;margin-bottom:4px;max-width:520px">程序就是一组清晰、有序的指令。就像教一个机器人做三明治——你需要一步一步地告诉它该做什么。</p>
+  <p style="font-size:12px;color:#5C5E62;max-width:520px;margin-bottom:48px">计算机本身不会"思考"——它只会执行我们给它的指令。编程就是把我们的想法变成计算机能够理解和执行的语言。</p>
+
+  <p style="font-size:13px;font-weight:500;color:#171A20;margin-bottom:20px;display:flex;align-items:center;gap:8px">
+    🍳 Teaching a robot to make a sandwich <span style="color:#5C5E62;font-weight:400;font-size:12px">— 教机器人做三明治</span>
+  </p>
+  <div class="g4" style="margin-bottom:0">
+    <div style="background:#fff;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">STEP 1</span>
+      <span style="font-size:36px">🍞</span>
+      <p style="font-size:14px;font-weight:500;color:#171A20">Take two slices of bread</p>
+      <p style="font-size:12px;color:#5C5E62">拿两片面包</p>
+    </div>
+    <div style="background:#fff;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">STEP 2</span>
+      <span style="font-size:36px">🥩</span>
+      <p style="font-size:14px;font-weight:500;color:#171A20">Add ham</p>
+      <p style="font-size:12px;color:#5C5E62">加火腿</p>
+    </div>
+    <div style="background:#fff;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">STEP 3</span>
+      <span style="font-size:36px">🧀</span>
+      <p style="font-size:14px;font-weight:500;color:#171A20">Add cheese</p>
+      <p style="font-size:12px;color:#5C5E62">加奶酪</p>
+    </div>
+    <div style="background:#fff;padding:28px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">STEP 4</span>
+      <span style="font-size:36px">🥪</span>
+      <p style="font-size:14px;font-weight:500;color:#171A20">Close the sandwich</p>
+      <p style="font-size:12px;color:#5C5E62">合上三明治</p>
+    </div>
+  </div>
+
+  <div style="padding:16px 24px;background:#fff;border:1px solid #eee;border-left:3px solid #3E6AE1;margin-top:16px">
+    <p style="font-size:14px;font-weight:500;color:#171A20;margin-bottom:4px">Programming works <span style="color:#3E6AE1">exactly the same way</span> — clear, ordered instructions.</p>
+    <p style="font-size:13px;color:#393C41;margin-bottom:4px">编程的工作方式完全相同——清晰、有序的指令。</p>
+    <p style="font-size:12px;color:#5C5E62">每一步都必须精确，顺序不能乱。少一步或者顺序错误，结果就会不对——这就是为什么编程需要细心和逻辑思维。</p>
+  </div>
+
+  <!-- Flow -->
+  <p style="font-size:13px;font-weight:500;color:#171A20;margin-top:56px;margin-bottom:24px;text-align:center">How it all works together <span style="color:#5C5E62;font-weight:400">— 一切是如何协同运作的</span></p>
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 28px;background:#F4F4F4;border:1px solid #eee;min-width:100px;text-align:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E6AE1" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span style="font-size:13px;font-weight:500;color:#171A20">Human</span><span style="font-size:11px;color:#5C5E62">人类</span>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eee" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 28px;background:#F4F4F4;border:1px solid #eee;min-width:100px;text-align:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#393C41" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      <span style="font-size:13px;font-weight:500;color:#171A20">Program</span><span style="font-size:11px;color:#5C5E62">程序</span>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eee" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 28px;background:#F4F4F4;border:1px solid #eee;min-width:100px;text-align:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#393C41" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9l2 2-2 2M13 13h2"/></svg>
+      <span style="font-size:13px;font-weight:500;color:#171A20">Computer</span><span style="font-size:11px;color:#5C5E62">计算机</span>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eee" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 28px;background:#F4F4F4;border:1px solid #eee;min-width:100px;text-align:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E6AE1" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span style="font-size:13px;font-weight:500;color:#171A20">Result</span><span style="font-size:11px;color:#5C5E62">结果</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 02 PROGRAMMING LANGUAGES -->
+<section id="languages" class="sec ash">
+<div class="container">
+  <p class="label">02 — programming languages · 编程语言</p>
+  <h2 class="hero-title">What is a Programming Language?</h2>
+  <p class="subtitle">什么是编程语言？</p>
+  <p class="desc" style="max-width:560px;margin-top:12px;margin-bottom:4px">Programming languages help <strong style="color:#171A20">humans communicate with computers</strong> — just like human languages help people communicate with each other.</p>
+  <p style="font-size:12px;color:#5C5E62;max-width:560px;margin-bottom:48px">编程语言是人类与计算机之间沟通的桥梁——就像人类语言帮助人与人交流一样。不同的编程语言有不同的特点和用途，但它们都能让计算机理解并执行我们的指令。</p>
+
+  <div class="g2">
+    <!-- Human langs -->
+    <div>
+      <p style="font-size:13px;font-weight:500;color:#171A20;margin-bottom:16px;min-height:36px">Human Languages <span style="color:#5C5E62;font-weight:400">— 人类语言</span></p>
+      <div class="g22">
+        <div style="background:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px"><span style="font-size:22px">🇬🇧</span><div><p style="font-size:14px;font-weight:500;color:#171A20">English</p><p style="font-size:11px;color:#5C5E62;margin-top:2px">英语</p></div></div>
+        <div style="background:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px"><span style="font-size:22px">🇨🇳</span><div><p style="font-size:14px;font-weight:500;color:#171A20">Chinese</p><p style="font-size:11px;color:#5C5E62;margin-top:2px">中文</p></div></div>
+        <div style="background:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px"><span style="font-size:22px">🇯🇵</span><div><p style="font-size:14px;font-weight:500;color:#171A20">Japanese</p><p style="font-size:11px;color:#5C5E62;margin-top:2px">日语</p></div></div>
+        <div style="background:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px"><span style="font-size:22px">🇪🇸</span><div><p style="font-size:14px;font-weight:500;color:#171A20">Spanish</p><p style="font-size:11px;color:#5C5E62;margin-top:2px">西班牙语</p></div></div>
+      </div>
+      <p style="font-size:12px;color:#5C5E62;margin-top:12px;text-align:center">Used to communicate between people — 用于人与人之间的交流</p>
+    </div>
+    <!-- Prog langs -->
+    <div>
+      <p style="font-size:13px;font-weight:500;color:#171A20;margin-bottom:16px;min-height:36px">Programming Languages <span style="color:#5C5E62;font-weight:400">— 编程语言</span></p>
+      <div class="g22">
+        <div class="lang-card"><div class="lang-card-front"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">🐍</span><p style="font-size:14px;font-weight:500;color:#171A20">Python</p></div><p style="font-size:12px;color:#5C5E62">清晰、适合初学者</p></div><div class="lang-card-back"><code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#3E6AE1">print("Hello!")</code><span style="font-size:11px;color:#5C5E62">清晰、适合初学者</span></div></div>
+        <div class="lang-card"><div class="lang-card-front"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">⚡</span><p style="font-size:14px;font-weight:500;color:#171A20">JavaScript</p></div><p style="font-size:12px;color:#5C5E62">驱动网页</p></div><div class="lang-card-back"><code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#3E6AE1">console.log("Hello!")</code><span style="font-size:11px;color:#5C5E62">驱动网页</span></div></div>
+        <div class="lang-card"><div class="lang-card-front"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">☕</span><p style="font-size:14px;font-weight:500;color:#171A20">Java</p></div><p style="font-size:12px;color:#5C5E62">企业和安卓</p></div><div class="lang-card-back"><code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#3E6AE1">System.out.println("Hi!");</code><span style="font-size:11px;color:#5C5E62">企业和安卓</span></div></div>
+        <div class="lang-card"><div class="lang-card-front"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">⚙️</span><p style="font-size:14px;font-weight:500;color:#171A20">C++</p></div><p style="font-size:12px;color:#5C5E62">快速且强大</p></div><div class="lang-card-back"><code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#3E6AE1">cout &lt;&lt; "Hello";</code><span style="font-size:11px;color:#5C5E62">快速且强大</span></div></div>
+      </div>
+      <p style="font-size:12px;color:#5C5E62;margin-top:12px;text-align:center">悬停查看代码示例 — hover a card to see an example</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:6px">Programming languages are a bridge between human ideas and computer actions.</p>
+    <p style="font-size:13px;color:#393C41;margin-bottom:4px">编程语言是人类想法与计算机执行之间的桥梁。</p>
+    <p style="font-size:12px;color:#5C5E62">就像我们用中文或英文表达想法一样，程序员用 Python、Java 等语言"告诉"计算机要做什么。计算机不懂人类语言，但它能理解编程语言写出的指令。</p>
+  </div>
+</div>
+</section>
+
+<!-- 03 WHY PYTHON -->
+<section id="why-python" class="sec white">
+<div class="container">
+  <p class="label">03 — why python · 为什么选择 Python</p>
+  <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px"><h2 class="hero-title">Why Python?</h2><span style="font-size:32px">🐍</span></div>
+  <p class="subtitle">为什么选择 Python？</p>
+  <p class="desc" style="max-width:480px;margin-top:12px;margin-bottom:4px">Out of all programming languages, Python is the <strong style="color:#171A20">perfect starting point</strong>.</p>
+  <p style="font-size:13px;color:#5C5E62;max-width:520px;margin-bottom:4px">在所有编程语言中，Python 是最适合初学者的起点。它简单易懂，但功能非常强大。</p>
+  <p style="font-size:12px;color:#5C5E62;max-width:520px;margin-bottom:48px">从今天开始，你将用 Python 探索编程的奇妙世界——从基础语法到绘图、游戏开发，甚至人工智能。</p>
+
+  <div class="g3">
+    <!-- Card 01 -->
+    <div style="background:#fff;padding:36px 32px;display:flex;flex-direction:column;gap:20px">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">01</span>
+      <div><h3>Easy to Read</h3><p style="font-size:12px;color:#5C5E62;margin-top:4px">易于阅读</p></div>
+      <div>
+        <p class="desc">Python reads almost like plain English. No confusing symbols or complex grammar required.</p>
+        <p style="font-size:12px;color:#5C5E62;margin-top:6px">Python 的语法非常接近自然语言，几乎像读英文句子一样流畅。不需要记忆复杂的符号或语法规则，让你专注于解决问题本身。</p>
+      </div>
+      <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-fn">print</span>(<span class="py-str">"Hello, World!"</span>)</div></div>
+    </div>
+    <!-- Card 02 -->
+    <div style="background:#fff;padding:36px 32px;display:flex;flex-direction:column;gap:20px">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">02</span>
+      <div><h3>Used in Real Life</h3><p style="font-size:12px;color:#5C5E62;margin-top:4px">用于现实生活</p></div>
+      <div>
+        <p class="desc">Python powers AI, Data Science, Automation, and Game Development.</p>
+        <p style="font-size:12px;color:#5C5E62;margin-top:6px">Python 被世界上最顶尖的科技公司使用，包括 Google、Netflix、NASA 等。你今天学的知识，明天就能用在真实的项目中。</p>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+        <li style="font-size:13px;color:#393C41;border-bottom:1px solid #eee;padding-bottom:8px">🤖 Artificial Intelligence</li>
+        <li style="font-size:13px;color:#393C41;border-bottom:1px solid #eee;padding-bottom:8px">📊 Data Science</li>
+        <li style="font-size:13px;color:#393C41;border-bottom:1px solid #eee;padding-bottom:8px">⚙️ Automation</li>
+        <li style="font-size:13px;color:#393C41">🎮 Game Development</li>
+      </ul>
+    </div>
+    <!-- Card 03 -->
+    <div style="background:#fff;padding:36px 32px;display:flex;flex-direction:column;gap:20px">
+      <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em">03</span>
+      <div><h3>Beginner Friendly</h3><p style="font-size:12px;color:#5C5E62;margin-top:4px">适合初学者</p></div>
+      <div>
+        <p class="desc">Python is the #1 first language taught around the world. Millions of students start here.</p>
+        <p style="font-size:12px;color:#5C5E62;margin-top:6px">Python 是全球最受欢迎的入门编程语言。全世界数以百万计的学生都从 Python 开始学习编程，包括你！</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#eee">
+        <div style="background:#F4F4F4;padding:20px 16px;text-align:center"><div style="font-size:24px;font-weight:500;color:#3E6AE1">#1</div><div style="font-size:11px;color:#5C5E62;margin-top:4px">Most popular first language</div></div>
+        <div style="background:#F4F4F4;padding:20px 16px;text-align:center"><div style="font-size:24px;font-weight:500;color:#3E6AE1">10M+</div><div style="font-size:11px;color:#5C5E62;margin-top:4px">Learners worldwide</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;padding:24px 32px;background:#F4F4F4;border:1px solid #eee;text-align:center">
+    <p style="font-size:14px;font-weight:500;color:#171A20">Python was named after <span style="color:#3E6AE1">Monty Python's Flying Circus</span>, a British comedy show.</p>
+    <p style="font-size:12px;color:#5C5E62;margin-top:4px">Python 以英国喜剧节目《蒙提·派森的飞行马戏团》命名。</p>
+  </div>
+</div>
+</section>
+
+<!-- 04 PYTHON FUNDAMENTALS -->
+<section id="fundamentals" class="sec ash">
+<div class="container">
+  <p class="label">04 — python fundamentals · Python 基础</p>
+  <h2 class="hero-title">Python Fundamentals</h2>
+  <p class="subtitle">Python 基础知识</p>
+  <p class="desc" style="margin-top:12px;margin-bottom:48px">Three core concepts every programmer needs to know. <span style="color:#5C5E62;font-size:13px">每个程序员都需要了解的三个核心概念。</span></p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('variables')">Variables <span style="font-size:11px;opacity:.7">变量</span></button>
+    <button class="tab-btn" onclick="showTab('selection')">Selection <span style="font-size:11px;opacity:.7">选择</span></button>
+    <button class="tab-btn" onclick="showTab('loops')">Loops <span style="font-size:11px;opacity:.7">循环</span></button>
+  </div>
+
+  <div class="tab-panel">
+    <!-- VARIABLES -->
+    <div id="tab-variables" class="tab-pane active">
+      <div class="g2">
+        <div>
+          <h3 style="margin-bottom:4px">What is a Variable?</h3>
+          <p style="font-size:13px;color:#3E6AE1;margin-bottom:20px">什么是变量？</p>
+          <div style="display:flex;gap:16px;padding:20px 24px;background:#F4F4F4;border:1px solid #eee;margin-bottom:20px">
+            <span style="font-size:40px">📦</span>
+            <div>
+              <p style="font-size:14px;font-weight:500;color:#171A20;margin-bottom:4px">A variable is like a labelled box.</p>
+              <p style="font-size:13px;color:#393C41">Put data inside, give it a name, use it later.</p>
+              <p style="font-size:12px;color:#5C5E62;margin-top:4px">变量就像一个有标签的盒子，里面存放数据。给它起个名字，以后随时可以用。</p>
+            </div>
+          </div>
+          <p class="desc" style="margin-bottom:20px">Variables store data — numbers, text, or anything your program needs to remember.</p>
+          <div style="display:flex;flex-direction:column;gap:1px;background:#eee">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff;font-family:'JetBrains Mono',monospace;font-size:13px"><span style="color:#818cf8">student_name</span><span style="color:#5C5E62">=</span><span style="color:#34d399">"Tom"</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff;font-family:'JetBrains Mono',monospace;font-size:13px"><span style="color:#818cf8">house</span><span style="color:#5C5E62">=</span><span style="color:#34d399">"Newton"</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff;font-family:'JetBrains Mono',monospace;font-size:13px"><span style="color:#818cf8">score</span><span style="color:#5C5E62">=</span><span style="color:#fbbf24">95</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">name</span> = <span class="py-str">"Alice"</span>
+<span class="py-kw">age</span> = <span class="py-num">15</span>
+
+<span class="py-fn">print</span>(name)
+<span class="py-fn">print</span>(age)</div><div class="code-out">Alice
+15</div></div>
+          <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">student_name</span> = <span class="py-str">"Tom"</span>
+<span class="py-kw">house</span> = <span class="py-str">"Newton"</span>
+<span class="py-kw">score</span> = <span class="py-num">95</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELECTION -->
+    <div id="tab-selection" class="tab-pane">
+      <div class="g2">
+        <div>
+          <h3 style="margin-bottom:4px">Making Decisions with Code</h3>
+          <p style="font-size:13px;color:#3E6AE1;margin-bottom:20px">用代码做决策</p>
+          <p class="desc" style="margin-bottom:4px">Computers make decisions using <strong style="color:#171A20">conditions</strong>. If something is true, do one thing. Otherwise, do another.</p>
+          <p style="font-size:12px;color:#5C5E62;margin-bottom:24px">计算机可以根据条件做出选择。如果条件成立，执行一件事；否则，执行另一件事。</p>
+          <div style="padding:20px 24px;background:#F4F4F4;border:1px solid #eee;margin-bottom:24px">
+            <p style="font-size:12px;font-weight:500;color:#171A20;margin-bottom:12px">Try it — drag the score / 拖动滑块试试：</p>
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+              <span style="font-size:12px;color:#5C5E62;width:44px;flex-shrink:0">Score:</span>
+              <input type="range" min="0" max="100" value="75" id="score-slider" oninput="updateSelection(this.value)">
+              <span id="score-val" style="font-family:'JetBrains Mono',monospace;font-weight:500;font-size:16px;color:#171A20;width:36px;text-align:right">75</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px">
+              <div style="padding:8px 20px;background:#fff;border:1px solid #eee;color:#171A20;font-weight:500">score &gt;= 50?</div>
+              <div style="display:flex;gap:32px">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="width:1px;height:16px;background:#eee"></div>
+                  <span style="font-size:10px;color:#34d399;font-weight:500">Yes ✓</span>
+                  <div id="pass-box" class="flow-branch-box pass">Pass</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                  <div style="width:1px;height:16px;background:#eee"></div>
+                  <span style="font-size:10px;color:#f87171;font-weight:500">No ✗</span>
+                  <div id="fail-box" class="flow-branch-box" style="opacity:.25">Fail</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">score</span> = <span class="py-num">75</span>
+
+<span class="py-kw">if</span> score >= <span class="py-num">50</span>:
+    <span class="py-fn">print</span>(<span class="py-str">"Pass"</span>)
+<span class="py-kw">else</span>:
+    <span class="py-fn">print</span>(<span class="py-str">"Fail"</span>)</div><div class="code-out">Pass</div></div>
+          <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">weather</span> = <span class="py-str">"rainy"</span>
+
+<span class="py-kw">if</span> weather = = <span class="py-str">"rainy"</span>:
+    <span class="py-fn">print</span>(<span class="py-str">"Take an umbrella"</span>)</div><div class="code-out">Take an umbrella</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOOPS -->
+    <div id="tab-loops" class="tab-pane">
+      <div class="g2">
+        <div>
+          <h3 style="margin-bottom:4px">Repeating Instructions</h3>
+          <p style="font-size:13px;color:#3E6AE1;margin-bottom:20px">重复指令</p>
+          <p class="desc" style="margin-bottom:4px">Loops let a computer repeat actions automatically — without writing the same line over and over.</p>
+          <p style="font-size:12px;color:#5C5E62;margin-bottom:24px">循环允许计算机自动重复操作，不需要重复写同一行代码。</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#eee;margin-bottom:24px">
+            <div style="background:#fff;padding:16px 20px">
+              <p style="font-size:11px;font-weight:500;color:#f87171;margin-bottom:8px">Without a loop</p>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#393C41;line-height:2">
+                <div>print("Hello")</div><div>print("Hello")</div><div>print("Hello")</div><div>print("Hello")</div><div>print("Hello")</div>
+              </div>
+            </div>
+            <div style="background:#fff;padding:16px 20px">
+              <p style="font-size:11px;font-weight:500;color:#34d399;margin-bottom:8px">With a loop</p>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#818cf8;line-height:2">
+                <div>for i in range(5):</div><div style="padding-left:20px">print("Hello")</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#F4F4F4;border:1px solid #eee;padding:16px 20px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <p style="font-size:12px;font-weight:500;color:#171A20">Watch the loop run / 看循环运行：</p>
+              <button id="run-btn" class="btn-secondary" style="height:32px;padding:0 16px;font-size:12px;border-color:#3E6AE1;color:#3E6AE1" onclick="runLoop()">▶ Run</button>
+            </div>
+            <div id="loop-output" class="loop-output"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">for</span> i <span class="py-kw">in</span> <span class="py-fn">range</span>(<span class="py-num">5</span>):
+    <span class="py-fn">print</span>(<span class="py-str">"Hello"</span>)</div><div class="code-out">Hello
+Hello
+Hello
+Hello
+Hello</div></div>
+          <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">for</span> lap <span class="py-kw">in</span> <span class="py-fn">range</span>(<span class="py-num">3</span>):
+    <span class="py-fn">print</span>(<span class="py-str">"Run one lap"</span>)</div><div class="code-out">Run one lap
+Run one lap
+Run one lap</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- 05 MINI CHALLENGE -->
+<section id="challenge" class="sec white">
+<div class="container">
+  <p class="label">05 — mini challenge · 小挑战</p>
+  <h2 class="hero-title">Mini Challenge</h2>
+  <p class="subtitle">小挑战</p>
+  <p class="desc" style="margin-top:12px;margin-bottom:4px">Can you read the code and figure out what happens?</p>
+  <p style="font-size:12px;color:#5C5E62;margin-bottom:40px">你能读懂代码并判断结果吗？</p>
+
+  <div class="quiz-cards">
+    <!-- Q1 -->
+    <div class="quiz-card">
+      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:24px">
+        <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em;padding-top:2px;flex-shrink:0">Q1</span>
+        <div>
+          <p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">What value is stored in x?</p>
+          <p style="font-size:12px;color:#5C5E62">x 中存储了什么值？</p>
+        </div>
+      </div>
+      <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">x</span> = <span class="py-num">10</span></div></div>
+      <div class="quiz-opts">
+        <button class="opt-btn" onclick="answer(this,'q1','A','B')"><span style="opacity:.5;margin-right:10px;font-size:12px">A.</span> x</button>
+        <button class="opt-btn" onclick="answer(this,'q1','B','B')"><span style="opacity:.5;margin-right:10px;font-size:12px">B.</span> 10</button>
+        <button class="opt-btn" onclick="answer(this,'q1','C','B')"><span style="opacity:.5;margin-right:10px;font-size:12px">C.</span> print</button>
+      </div>
+      <div id="exp-q1" class="explanation">
+        <p style="font-size:13px;font-weight:500;color:#3E6AE1;margin-bottom:4px" id="exp-q1-title"></p>
+        <p style="font-size:13px;color:#393C41;margin-bottom:4px">The variable x stores the number 10. The = sign assigns the right-side value to the left-side name.</p>
+        <p style="font-size:11px;color:#5C5E62">变量 x 存储数字 10。= 号将右边的值赋给左边的名字。</p>
+      </div>
+    </div>
+    <!-- Q2 -->
+    <div class="quiz-card">
+      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:24px">
+        <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em;padding-top:2px;flex-shrink:0">Q2</span>
+        <div>
+          <p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">How many times will "Hi" be printed?</p>
+          <p style="font-size:12px;color:#5C5E62">"Hi" 会被打印多少次？</p>
+        </div>
+      </div>
+      <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">for</span> i <span class="py-kw">in</span> <span class="py-fn">range</span>(<span class="py-num">3</span>):
+    <span class="py-fn">print</span>(<span class="py-str">"Hi"</span>)</div></div>
+      <div class="quiz-opts">
+        <button class="opt-btn" onclick="answer(this,'q2','A','C')"><span style="opacity:.5;margin-right:10px;font-size:12px">A.</span> 1</button>
+        <button class="opt-btn" onclick="answer(this,'q2','B','C')"><span style="opacity:.5;margin-right:10px;font-size:12px">B.</span> 2</button>
+        <button class="opt-btn" onclick="answer(this,'q2','C','C')"><span style="opacity:.5;margin-right:10px;font-size:12px">C.</span> 3</button>
+      </div>
+      <div id="exp-q2" class="explanation">
+        <p style="font-size:13px;font-weight:500;color:#3E6AE1;margin-bottom:4px" id="exp-q2-title"></p>
+        <p style="font-size:13px;color:#393C41;margin-bottom:4px">range(3) creates the sequence [0, 1, 2], so the loop runs exactly 3 times.</p>
+        <p style="font-size:11px;color:#5C5E62">range(3) 创建序列 [0, 1, 2]，所以循环运行 3 次。</p>
+      </div>
+    </div>
+    <!-- Q3 -->
+    <div class="quiz-card">
+      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:24px">
+        <span style="font-size:11px;font-weight:500;color:#3E6AE1;letter-spacing:.1em;padding-top:2px;flex-shrink:0">Q3</span>
+        <div>
+          <p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">What will be printed?</p>
+          <p style="font-size:12px;color:#5C5E62">会打印什么？</p>
+        </div>
+      </div>
+      <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">score</span> = <span class="py-num">40</span>
+
+<span class="py-kw">if</span> score >= <span class="py-num">50</span>:
+    <span class="py-fn">print</span>(<span class="py-str">"Pass"</span>)
+<span class="py-kw">else</span>:
+    <span class="py-fn">print</span>(<span class="py-str">"Fail"</span>)</div></div>
+      <div class="quiz-opts">
+        <button class="opt-btn" onclick="answer(this,'q3','A','B')"><span style="opacity:.5;margin-right:10px;font-size:12px">A.</span> Pass</button>
+        <button class="opt-btn" onclick="answer(this,'q3','B','B')"><span style="opacity:.5;margin-right:10px;font-size:12px">B.</span> Fail</button>
+        <button class="opt-btn" onclick="answer(this,'q3','C','B')"><span style="opacity:.5;margin-right:10px;font-size:12px">C.</span> Nothing</button>
+      </div>
+      <div id="exp-q3" class="explanation">
+        <p style="font-size:13px;font-weight:500;color:#3E6AE1;margin-bottom:4px" id="exp-q3-title"></p>
+        <p style="font-size:13px;color:#393C41;margin-bottom:4px">score is 40, which is NOT >= 50, so the else branch runs and prints "Fail".</p>
+        <p style="font-size:11px;color:#5C5E62">score 是 40，不满足 >= 50，所以执行 else 分支，打印 "Fail"。</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:32px;padding:24px 32px;background:#F4F4F4;border:1px solid #eee;border-left:3px solid #3E6AE1">
+    <p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:4px">You just read real Python code.</p>
+    <p style="font-size:13px;color:#393C41">You're already thinking like a programmer. <span style="color:#5C5E62;margin-left:8px">你已经开始像程序员一样思考了。</span></p>
+  </div>
+</div>
+</section>
+
+<!-- 06 NEXT WEEK -->
+<section id="next-week" class="sec ash">
+<div class="container">
+  <p class="label">06 — coming next week · 下周预告</p>
+  <h2 class="hero-title">Python Turtle Graphics</h2>
+  <p style="font-size:22px;font-weight:400;color:#393C41;margin-bottom:4px">Create Art with Code · 用代码创作艺术</p>
+  <p style="font-size:14px;color:#5C5E62;margin-bottom:4px">下周我们将学习 Python 海龟绘图（Turtle Graphics）。</p>
+  <p style="font-size:13px;color:#5C5E62;max-width:560px;margin-bottom:48px">通过控制一只虚拟的"海龟"在屏幕上移动，你可以绘制出各种美丽的几何图形。这是学习编程最直观、最有趣的方式之一——你写的每一行代码都会立刻变成屏幕上的图案。</p>
+
+  <div class="g2">
+    <div>
+      <p class="desc" style="margin-bottom:4px">Turtle Graphics lets you <strong style="color:#171A20">draw shapes and patterns</strong> by telling a virtual turtle where to move.</p>
+      <p style="font-size:13px;color:#5C5E62;margin-bottom:28px">海龟绘图通过移动一只虚拟海龟来绘制图形。你只需告诉它"前进多少步"、"转多少度"，它就会在屏幕上留下轨迹，形成各种图案。</p>
+
+      <div style="display:flex;flex-direction:column;gap:1px;background:#eee;margin-bottom:28px">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff"><span style="font-size:16px">⬜</span><span style="font-size:14px;font-weight:500;color:#171A20;width:120px;flex-shrink:0">Squares</span><span style="font-size:12px;color:#5C5E62">正方形 — 最基础的几何图形</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff"><span style="font-size:16px">⭐</span><span style="font-size:14px;font-weight:500;color:#171A20;width:120px;flex-shrink:0">Stars</span><span style="font-size:12px;color:#5C5E62">星形 — 循环 + 角度的组合</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff"><span style="font-size:16px">🌀</span><span style="font-size:14px;font-weight:500;color:#171A20;width:120px;flex-shrink:0">Spirals</span><span style="font-size:12px;color:#5C5E62">螺旋形 — 逐步增加步长</span></div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#fff"><span style="font-size:16px">🔷</span><span style="font-size:14px;font-weight:500;color:#171A20;width:120px;flex-shrink:0">Geometric Art</span><span style="font-size:12px;color:#5C5E62">几何艺术 — 创意无限</span></div>
+      </div>
+
+      <p style="font-size:13px;font-weight:500;color:#171A20;margin-bottom:8px">预览代码 — Preview Code</p>
+      <div class="code-block"><div class="code-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="code-lang">python</span></div><div class="code-body"><span class="py-kw">import</span> turtle
+
+<span class="py-cmt"># 画一个正方形</span>
+<span class="py-kw">for</span> i <span class="py-kw">in</span> <span class="py-fn">range</span>(<span class="py-num">4</span>):
+    turtle.<span class="py-fn">forward</span>(<span class="py-num">100</span>)  <span class="py-cmt"># 前进 100 步</span>
+    turtle.<span class="py-fn">left</span>(<span class="py-num">90</span>)       <span class="py-cmt"># 向左转 90 度</span></div></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:4px;overflow:hidden;background:#000">
+        <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=94348300&bvid=BV1AE411W7jJ&cid=161070983&p=1&autoplay=0"
+          width="100%" height="100%"
+          scrolling="no" frameborder="0" allowfullscreen="true"
+          style="position:absolute;inset:0;width:100%;height:100%;border:none"></iframe>
+      </div>
+
+      <!-- Live turtle animation -->
+      <div style="background:#0d1117;border:1px solid #2a2d35;border-radius:4px;overflow:hidden;aspect-ratio:16/10">
+        <svg viewBox="0 0 480 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- faint grid -->
+          <line x1="0" y1="50" x2="480" y2="50" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="0" y1="100" x2="480" y2="100" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="0" y1="150" x2="480" y2="150" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="0" y1="200" x2="480" y2="200" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="0" y1="250" x2="480" y2="250" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="54" y1="0" x2="54" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="108" y1="0" x2="108" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="162" y1="0" x2="162" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="216" y1="0" x2="216" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="270" y1="0" x2="270" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="324" y1="0" x2="324" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="378" y1="0" x2="378" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <line x1="432" y1="0" x2="432" y2="300" stroke="#ffffff05" stroke-width="1"/>
+          <!-- blue square (180×180 at 140,60) -->
+          <rect id="sq-path" x="140" y="60" width="180" height="180" fill="none" stroke="#3E6AE1" stroke-width="2" stroke-linecap="square"/>
+          <!-- turtle -->
+          <text id="turtle-g" x="-10" y="10" font-size="18" style="user-select:none">🐢</text>
+          <!-- label -->
+          <text x="240" y="292" text-anchor="middle" fill="#393C41" font-size="9" font-family="monospace">turtle graphics · live preview</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;padding:28px 32px;background:#fff;border:1px solid #eee;border-left:3px solid #3E6AE1">
+    <p style="font-size:20px;font-weight:500;color:#171A20;margin-bottom:6px">Next week, you'll write code that draws beautiful art.</p>
+    <p style="font-size:14px;color:#393C41;margin-bottom:4px">下周，你将亲手编写代码，让计算机在屏幕上绘制出属于你的图案。</p>
+    <p style="font-size:12px;color:#5C5E62">从一个简单的正方形开始，逐步探索更复杂的几何艺术。编程不只是文字，它也可以是艺术。</p>
+  </div>
+</div>
+</section>
+
+<!-- 07 FUN FACTS -->
+<section id="fun-facts" class="sec white">
+<div class="container">
+  <p class="label">07 — fun facts · 趣味知识</p>
+  <h2 class="hero-title">Did You Know?</h2>
+  <p class="subtitle" style="margin-bottom:48px">你知道吗？</p>
+
+  <div class="g3" style="border:1px solid #eee">
+    <div class="fact-cell"><span style="font-size:32px">🎂</span><div><p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">Python was created in 1991</p><p style="font-size:12px;color:#3E6AE1">Python 创建于 1991 年</p></div><div><p class="desc">Over 30 years old — and still growing stronger every year.</p><p style="font-size:11px;color:#5C5E62;margin-top:4px">30多年前创建——至今仍越来越强大。</p></div></div>
+    <div class="fact-cell"><span style="font-size:32px">🤖</span><div><p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">Python powers most AI systems</p><p style="font-size:12px;color:#3E6AE1">Python 驱动大多数 AI 系统</p></div><div><p class="desc">ChatGPT, Tesla autopilot, and Google Search all use Python.</p><p style="font-size:11px;color:#5C5E62;margin-top:4px">ChatGPT、特斯拉自动驾驶、谷歌搜索都使用 Python。</p></div></div>
+    <div class="fact-cell"><span style="font-size:32px">🌍</span><div><p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">Millions learn Python every year</p><p style="font-size:12px;color:#3E6AE1">每年有数百万人学习 Python</p></div><div><p class="desc">It's the world's most popular language to learn.</p><p style="font-size:11px;color:#5C5E62;margin-top:4px">它是全球最受欢迎的编程学习语言。</p></div></div>
+    <div class="fact-cell"><span style="font-size:32px">🔬</span><div><p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">Used in scientific research</p><p style="font-size:12px;color:#3E6AE1">用于科学研究</p></div><div><p class="desc">NASA, CERN, and SpaceX all use Python in their research.</p><p style="font-size:11px;color:#5C5E62;margin-top:4px">NASA、欧核中心和 SpaceX 都在研究中使用 Python。</p></div></div>
+    <div class="fact-cell"><span style="font-size:32px">📱</span><div><p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">Instagram is built with Python</p><p style="font-size:12px;color:#3E6AE1">Instagram 是用 Python 构建的</p></div><div><p class="desc">The app with 2 billion users runs Python on its servers.</p><p style="font-size:11px;color:#5C5E62;margin-top:4px">拥有 20 亿用户的应用程序在其服务器上运行 Python。</p></div></div>
+    <div class="fact-cell"><span style="font-size:32px">🏫</span><div><p style="font-size:15px;font-weight:500;color:#171A20;margin-bottom:2px">Taught in 150+ countries</p><p style="font-size:12px;color:#3E6AE1">在 150 多个国家教授</p></div><div><p class="desc">Python is the most widely taught first programming language globally.</p><p style="font-size:11px;color:#5C5E62;margin-top:4px">Python 是全球教授最广泛的第一编程语言。</p></div></div>
+  </div>
+
+  <div class="callout-dark">
+    <p style="font-size:32px;font-weight:500;color:#fff;margin-bottom:12px;line-height:1.25">Ready to start coding?</p>
+    <p style="font-size:16px;color:#8E8E8E;margin-bottom:4px">Your journey starts right here.</p>
+    <p style="font-size:13px;color:#5C5E62;margin-bottom:32px">你的编程之旅从这里开始。</p>
+    <button class="btn-primary" onclick="goTo('what-is-programming')">Start Learning</button>
+  </div>
+</div>
+</section>
+
+<script>
+// ── scroll progress + nav ──
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('nav').classList.toggle('scrolled', h.scrollTop > 40);
+});
+
+// ── section reveal ──
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.05 });
+document.querySelectorAll('.sec').forEach(s => obs.observe(s));
+
+// ── smooth scroll ──
+function goTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── tabs ──
+function showTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── selection demo ──
+function updateSelection(v) {
+  document.getElementById('score-val').textContent = v;
+  const passed = +v >= 50;
+  const pb = document.getElementById('pass-box');
+  const fb = document.getElementById('fail-box');
+  pb.className = 'flow-branch-box' + (passed ? ' pass' : '');
+  pb.style.opacity = passed ? '1' : '.25';
+  fb.className = 'flow-branch-box' + (!passed ? ' fail' : '');
+  fb.style.opacity = !passed ? '1' : '.25';
+}
+
+// ── loop demo ──
+let loopRunning = false;
+function runLoop() {
+  if (loopRunning) return;
+  loopRunning = true;
+  const out = document.getElementById('loop-output');
+  const btn = document.getElementById('run-btn');
+  out.innerHTML = '';
+  btn.textContent = 'Running…';
+  btn.disabled = true;
+  let n = 0;
+  const id = setInterval(() => {
+    n++;
+    const line = document.createElement('div');
+    line.style.cssText = 'opacity:0;transition:opacity .3s';
+    line.textContent = 'Hello';
+    out.appendChild(line);
+    requestAnimationFrame(() => line.style.opacity = '1');
+    if (n >= 5) {
+      clearInterval(id);
+      loopRunning = false;
+      btn.textContent = '▶ Run';
+      btn.disabled = false;
+    }
+  }, 450);
+}
+
+// ── quiz ──
+function answer(btn, qid, chosen, correct) {
+  const card = btn.closest('.quiz-card');
+  card.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    const lbl = b.textContent.trim()[0];
+    if (lbl === correct) b.classList.add('correct');
+    else if (lbl === chosen && chosen !== correct) b.classList.add('wrong');
+    else b.classList.add('fade');
+  });
+  const exp = document.getElementById('exp-' + qid);
+  const title = document.getElementById('exp-' + qid + '-title');
+  title.textContent = chosen === correct ? 'Correct! ✓' : 'The correct answer is ' + correct;
+  title.style.color = chosen === correct ? '#3E6AE1' : '#171A20';
+  if (chosen !== correct) exp.classList.add('wrong-exp');
+  exp.classList.add('show');
+}
+</script>
+</body>
+</html>
